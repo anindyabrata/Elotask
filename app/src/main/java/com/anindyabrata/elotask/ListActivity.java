@@ -5,19 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_list);
     }
 
-    public void login(View view) {
-        Intent toList = new Intent(this, ListActivity.class) ;
-        startActivity(toList);
-    }
-
-    public void register(View view) {
+    public void addnew(View view) {
+        Intent toNewItem = new Intent(this, NewItemInput.class) ;
+        startActivity(toNewItem);
     }
 }
