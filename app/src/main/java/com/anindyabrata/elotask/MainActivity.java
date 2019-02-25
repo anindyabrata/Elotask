@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,29 +28,47 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Get string from email text field
+     * @return string containing user's email
+     */
     private String getEmail(){
-        TextView emailText = (TextView)findViewById(R.id.emailEditText) ;
+        EditText emailText = (EditText)findViewById(R.id.emailEditText) ;
         return emailText.getText().toString();
     }
 
+    /**
+     * Get string from password text field
+     * @return string containing user's password
+     */
     private String getPassword(){
-        TextView passText = (TextView)findViewById(R.id.passwordEditText);
+        EditText passText = (EditText) findViewById(R.id.passwordEditText);
         return passText.getText().toString();
     }
 
+    /**
+     * Clears the Text Fields of the EditTexts.
+     */
     private void clearTextFields(){
-        TextView emailText = (TextView)findViewById(R.id.emailEditText) ;
-        TextView passText = (TextView)findViewById(R.id.passwordEditText);
+        EditText emailText = (EditText)findViewById(R.id.emailEditText) ;
+        EditText passText = (EditText)findViewById(R.id.passwordEditText);
         emailText.setText("");
         passText.setText("");
     }
 
+    /**
+     * When a user successfully logs in, go to the next activity.
+     */
     private void loginSuccessful(){
         clearTextFields();
         Intent toList = new Intent(this, ListActivity.class) ;
         startActivity(toList);
     }
 
+    /**
+     * Called when Log in button is pressed. Tries to Log in using given credentials
+     * @param view View for context
+     */
     public void login(View view) {
         String email = getEmail();
         String password = getPassword();
@@ -73,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Called when Register button is pressed. Tries to create new user using given email and
+     * password.
+     * @param view View for context
+     */
     public void register(View view) {
         String email = getEmail();
         String password = getPassword();

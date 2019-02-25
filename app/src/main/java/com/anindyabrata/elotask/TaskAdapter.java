@@ -21,6 +21,11 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    /**
+     * Adapter is divided into two ArrayLists of Tasks. This is done so that Tasks that have been
+     * crossed out are displayed on top of the other Tasks. The adapter abstraction allows the two
+     * ArrayLists to seem concatenated.
+     */
     TaskAdapter() {
         checked = new ArrayList<Task>();
         unchecked = new ArrayList<Task>();
@@ -29,26 +34,48 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Removes all Tasks in view
+     */
     public void clear(){
         checked.clear();
         unchecked.clear();
     }
 
+    /**
+     * Adds tasks to the proper ArrayList
+     * @param t The Task object to be inserted into the view
+     */
     public void add(Task t){
         if(t.isDone()) checked.add(t);
         else unchecked.add(t);
     }
 
+    /**
+     * Returns the Task object at given adapter position
+     * @param i Adapter position corresponding to object
+     * @return Task object corresponding to Adapter Position
+     */
     public Task get(int i){
         if(i < checked.size()) return checked.get(i);
         else return unchecked.get(i-checked.size()) ;
     }
 
+    /**
+     * Removes Task object corresponding to given adapter position
+     * @param i Adapter position corresponding to object
+     */
     public void remove(int i){
         if(i < checked.size()) checked.remove(i);
         else unchecked.remove(i-checked.size());
     }
 
+    /**
+     * Iterates over checked then unchecked items and returns adapter position of given Task where
+     * Task id and Object id are equal
+     * @param t Task object with target search id
+     * @return Adapter position of object with same id as t, returns -1 if not found
+     */
     public int find(Task t){
         for(int i = 0 ; i < checked.size(); ++i){
             if(t.equals(checked.get(i))) return i;
@@ -59,6 +86,12 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return -1;
     }
 
+    /**
+     * This is called whenever a checkbox is toggled. Repositions the toggled Task as necessary.
+     * Updates the corresponding Task on FireStore as well.
+     * @param isChecked New value of checkbox after being toggled
+     * @param i Adapter position corresponding to toggled checkbox's view
+     */
     public void checkChange(boolean isChecked, int i){
         Task t = get(i);
         // Stop onCheckedListener from being triggered on initialization
@@ -70,10 +103,18 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyItemMoved(i,find(t));
     }
 
+    /**
+     * Updates a single Task on Firestore
+     * @param t Task to be updated
+     */
     public void fireUpdate(Task t){
         db.document("users/"+mAuth.getUid()+"/tasks/"+t.getId()).set(t.toMap());
     }
 
+    /**
+     * Deletes a single Task on Firestore
+     * @param t Task to be deleted
+     */
     public void fireDelete(Task t){
         db.document("users/"+mAuth.getUid()+"/tasks/"+t.getId()).delete();
     }
@@ -104,13 +145,17 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             super(itemView);
             editText = (EditText)itemView.findViewById(R.id.singleItemEditText);
             checkBox = (CheckBox)itemView.findViewById(R.id.singleItemCheckBox);
+            // Updates based on EditText after editing is done
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if(!hasFocus){
+                        // These three lines ensure that the cursor is not unnecessarily visible
                         editText.setFocusable(false);
                         editText.setFocusable(true);
                         editText.setFocusableInTouchMode(true);
+
+                        // Update message of Task only if changed
                         int i = getAdapterPosition();
                         Task t = get(i);
                         if(!editText.getText().toString().equals(t.getMessage())){
@@ -120,12 +165,17 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     }
                 }
             });
+            // Action taken when a checkBox is toggled
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     checkChange(isChecked, getAdapterPosition());
+
+                    // Strikeout text when checked
                     if(isChecked) editText.setPaintFlags(
                             editText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    // Remove Strikeout when not checked (This is necessary because views are
+                    // recycled)
                     else editText.setPaintFlags(
                             editText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 }

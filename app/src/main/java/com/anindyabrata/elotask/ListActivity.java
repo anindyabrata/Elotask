@@ -38,6 +38,9 @@ public class ListActivity extends AppCompatActivity {
         retrieveAll();
     }
 
+    /**
+     * Initializes RecycleView with a Layout Manager and an Adapter. Adds swipe functionality.
+     */
     private void setupList(){
         RecyclerView list = (RecyclerView)findViewById(R.id.itemList);
 
@@ -76,11 +79,19 @@ public class ListActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(list);
     }
 
+    /**
+     * Getter method for RecycleView's adapter
+     * @return TaskAdapter assigned to RecycleView
+     */
     private TaskAdapter getListAdapter(){
         RecyclerView list = (RecyclerView)findViewById(R.id.itemList);
         return (TaskAdapter) list.getAdapter();
     }
 
+    /**
+     * Replace current items in view with given Tasks
+     * @param a List of Tasks to populate the view
+     */
     private void loadList(ArrayList<Task> a){
         TaskAdapter mAdapter = getListAdapter();
         mAdapter.clear();
@@ -88,8 +99,14 @@ public class ListActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Takes care of Firestore initializations. Loads initial documents and sets up realtime updates
+     */
     private void retrieveAll(){
+        // Reference to all Tasks of this user
         CollectionReference all = db.collection("users/"+mAuth.getUid()+"/tasks");
+
+        // Update when Firestore is updated
         /*all.addSnapshotListener(new EventListener<QuerySnapshot>(){
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -111,7 +128,9 @@ public class ListActivity extends AppCompatActivity {
                         }
                     }
                 });*/
-    all.get().addOnCompleteListener(
+
+        // Download all Tasks of this user and assign to view
+        all.get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(
@@ -137,6 +156,7 @@ public class ListActivity extends AppCompatActivity {
         );
     }
 
+    // Makes sure that EditTexts don't remain in focus
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -154,6 +174,10 @@ public class ListActivity extends AppCompatActivity {
         return super.dispatchTouchEvent( event );
     }
 
+    /**
+     * Called when Floating Action Button is pressed. Opens a new activity to enter new task
+     * @param view View for context
+     */
     public void addnew(View view) {
         Intent toNewItem = new Intent(this, NewItemInput.class) ;
         startActivity(toNewItem);

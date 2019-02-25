@@ -21,11 +21,19 @@ public class NewItemInput extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Get message from message text field
+     * @return string containing new Task message
+     */
     private String getMessage(){
         TextView messageText = (TextView)findViewById(R.id.newItemEditText) ;
         return messageText.getText().toString();
     }
 
+    /**
+     * Adds new Task to firestore
+     * @param view View for context
+     */
     public void addItem(View view) {
         String message = getMessage();
         db.collection("users/"+mAuth.getUid()+"/tasks")
