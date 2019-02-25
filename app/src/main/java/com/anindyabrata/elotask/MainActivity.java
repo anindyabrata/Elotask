@@ -11,15 +11,21 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
     }
 
     private String getEmail(){
@@ -78,7 +84,15 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull com.google.android.gms.tasks.Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
+                            if (task.isSuccessful()&&mAuth.getUid()!=null) {
+                                Map<String, Object> doc = new HashMap<>();
+                                doc.put("email",getEmail());
+                                try {
+                                    db.collection("users")
+                                            .document(mAuth.getUid()).set(doc).wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 loginSuccessful();
                             } else {
                                 Toast.makeText(MainActivity.this,
