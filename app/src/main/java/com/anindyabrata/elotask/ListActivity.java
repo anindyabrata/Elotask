@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -34,9 +36,36 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        setupDate();
         setupList();
         retrieveAll();
     }
+
+    /**
+     * Initializes TextViews with current date
+     */
+    private void setupDate() {
+        Calendar now = Calendar.getInstance();
+        TextView tvDay = (TextView)findViewById(R.id.dayTextView);
+        TextView tvDate = (TextView)findViewById(R.id.dateTextView);
+        TextView tvMonth = (TextView)findViewById(R.id.monthTextView);
+        TextView tvYear = (TextView)findViewById(R.id.yearTextView);
+
+        String[] dayOfWeek = { "", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"
+                , "SATURDAY" };
+        String[] monthOfYear = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP"
+                ,"OCT", "NOV", "DEC" };
+        String day = dayOfWeek[now.get(Calendar.DAY_OF_WEEK)];
+        String date = String.valueOf(now.get(Calendar.DATE));
+        String month = monthOfYear[now.get(Calendar.MONTH)];
+        String year = String.valueOf(now.get(Calendar.YEAR));
+
+        tvDay.setText(day);
+        tvDate.setText(date);
+        tvMonth.setText(month);
+        tvYear.setText(year);
+    }
+
 
     /**
      * Initializes RecycleView with a Layout Manager and an Adapter. Adds swipe functionality.
@@ -77,6 +106,17 @@ public class ListActivity extends AppCompatActivity {
 
         // activate swipe to delete
         itemTouchHelper.attachToRecyclerView(list);
+
+        /*list.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(mAdapter.getCheckedCount() > 0){
+                    mAdapter.deleteChecked();
+                    return true;
+                }
+                return false;
+            }
+        });*/
     }
 
     /**
@@ -109,7 +149,8 @@ public class ListActivity extends AppCompatActivity {
         // Update when Firestore is updated
         /*all.addSnapshotListener(new EventListener<QuerySnapshot>(){
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                        @Nullable FirebaseFirestoreException e) {
                         if(e!=null && queryDocumentSnapshots != null){
                             TaskAdapter l = getListAdapter();
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
@@ -166,7 +207,8 @@ public class ListActivity extends AppCompatActivity {
                 v.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
                     v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm;
+                    imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }

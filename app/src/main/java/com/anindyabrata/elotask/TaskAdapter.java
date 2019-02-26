@@ -1,5 +1,6 @@
 package com.anindyabrata.elotask;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -104,6 +106,18 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     }
 
     /**
+     * Called when any item on list is Long pressed. Deletes all Tasks marked as done from list and
+     * from firestore.
+     */
+    public void deleteChecked() {
+        // Loops over each item to delete as deleting multiple documents from firestore at once is
+        // not supported.
+        for(int i = 0 ; i < checked.size(); ++i) fireDelete(checked.get(i));
+        checked.clear();
+        notifyDataSetChanged();
+    }
+
+    /**
      * Updates a single Task on Firestore
      * @param t Task to be updated
      */
@@ -133,16 +147,20 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         viewHolder.getEditText().setText(get(i).getMessage());
     }
 
+    public int getCheckedCount(){ return checked.size(); }
+
     @Override
     public int getItemCount() {
         return checked.size() + unchecked.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public View view;
         private final EditText editText;
         private final CheckBox checkBox;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView;
             editText = (EditText)itemView.findViewById(R.id.singleItemEditText);
             checkBox = (CheckBox)itemView.findViewById(R.id.singleItemCheckBox);
             // Updates based on EditText after editing is done
@@ -172,14 +190,32 @@ class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     checkChange(isChecked, getAdapterPosition());
 
                     // Strikeout text when checked
-                    if(isChecked) editText.setPaintFlags(
-                            editText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    if(isChecked) {
+                        editText.setPaintFlags(
+                                editText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        editText.setTextColor(Color.GRAY);
+                    }
                     // Remove Strikeout when not checked (This is necessary because views are
                     // recycled)
-                    else editText.setPaintFlags(
-                            editText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                    else {
+                        editText.setPaintFlags(
+                                editText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                        editText.setTextColor(Color.BLACK);
+                    }
                 }
             });
+            View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(checkBox.isChecked()){
+                        deleteChecked();
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            editText.setOnLongClickListener(longClickListener);
+            checkBox.setOnLongClickListener(longClickListener);
         }
 
         public TextView getEditText() {

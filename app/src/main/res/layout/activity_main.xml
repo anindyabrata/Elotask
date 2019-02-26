@@ -21,13 +21,17 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress"
+            android:textCursorDrawable="@null"
+            android:backgroundTint="@android:color/black"/>
         <EditText
             android:id="@+id/passwordEditText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textCursorDrawable="@null"
+            android:backgroundTint="@android:color/black"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

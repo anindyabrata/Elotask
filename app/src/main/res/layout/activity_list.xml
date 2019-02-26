@@ -4,31 +4,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorLightGray"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:focusedByDefault="true"
     tools:context=".ListActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:id="@+id/itemList">
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="38dp"
+        android:background="@android:color/background_light"
+        android:rowCount="2"
+        android:columnCount="1">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+            <GridLayout>
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+                    android:textSize="45sp"
+                    android:layout_marginRight="5dp"/>
+                <GridLayout
+                    android:columnCount="1"
+                    android:layout_gravity="center_vertical">
+                    <TextView
+                        android:id="@+id/monthTextView"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"/>
+                    <TextView
+                        android:id="@+id/yearTextView"/>
+                </GridLayout>
+            </GridLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="fill_horizontal"/>
+            <TextView
+                android:id="@+id/dayTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"/>
 
-    </android.support.v7.widget.RecyclerView>
+        </GridLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/itemList"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="vertical">
+
+        </android.support.v7.widget.RecyclerView>
+    </GridLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="10dp"
+        android:onClick="addnew"
+        app:backgroundTint="@color/colorFabLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_gravity="bottom|center"
-        app:backgroundTint="@color/colorPrimary"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@color/colorPrimaryDark"
-        android:onClick="addnew"/>
+        app:tint="@color/colorFabDark" />
 
 
 </android.support.constraint.ConstraintLayout>

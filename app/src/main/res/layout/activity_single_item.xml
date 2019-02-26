@@ -3,6 +3,7 @@
     android:id="@+id/singleItemLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:columnCount="2">
     <EditText
         android:id="@+id/singleItemEditText"
@@ -14,5 +15,6 @@
     <CheckBox
         android:id="@+id/singleItemCheckBox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:button="@drawable/task_checkbox"/>
 </GridLayout>
