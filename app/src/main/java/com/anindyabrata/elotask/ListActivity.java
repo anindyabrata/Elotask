@@ -225,4 +225,11 @@ public class ListActivity extends AppCompatActivity {
         startActivity(toNewItem);
         finish();
     }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mAuth.signOut();
+        Toast.makeText(ListActivity.this,"Logged Out", Toast.LENGTH_LONG).show();
+    }
 }
