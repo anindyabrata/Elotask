@@ -39,8 +39,6 @@ public class NewItemInput extends AppCompatActivity {
         String message = getMessage();
         db.collection("users/"+mAuth.getUid()+"/tasks")
                 .add((new Task("0",message, false)).toMap());
-        Intent backToList = new Intent(this, ListActivity.class);
-        startActivity(backToList);
         finish();
     }
 }
