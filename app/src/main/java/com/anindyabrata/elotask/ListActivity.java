@@ -38,6 +38,11 @@ public class ListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         setupDate();
         setupList();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         retrieveAll();
     }
 
@@ -223,7 +228,6 @@ public class ListActivity extends AppCompatActivity {
     public void addnew(View view) {
         Intent toNewItem = new Intent(this, NewItemInput.class) ;
         startActivity(toNewItem);
-        finish();
     }
 
     @Override
