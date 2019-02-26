@@ -223,5 +223,6 @@ public class ListActivity extends AppCompatActivity {
     public void addnew(View view) {
         Intent toNewItem = new Intent(this, NewItemInput.class) ;
         startActivity(toNewItem);
+        finish();
     }
 }
