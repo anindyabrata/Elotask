@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
